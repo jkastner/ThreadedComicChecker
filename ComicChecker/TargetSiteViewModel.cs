@@ -18,24 +18,30 @@ namespace ComicChecker
     {
         public const string DefaultFileName = "ComicDataConfig.xml";
 
-        private static readonly ReadOnlyCollection<String> DefaultComics = new ReadOnlyCollection<string>(new List<string>
+        private static readonly IReadOnlyList<string> DefaultComics =
+            new List<string>()
+            {
+                "http://xkcd.com/", 
+            };
+
+        public TargetSiteViewModel()
         {
-            //Sample population removed for public comic
-        });
+            Sites = new ObservableCollection<TargetSite>();
+        }
 
         [DataMember]
-        public ObservableCollection<TargetSite> Sites = new ObservableCollection<TargetSite>();
+        public ObservableCollection<TargetSite> Sites { get; private set; }
 
-        public static TargetSiteViewModel InitializeFromFile(String fileName = "")
+        public static TargetSiteViewModel InitializeFromFile(string fileName = "")
         {
-            if (String.IsNullOrWhiteSpace(fileName))
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 fileName = DefaultFileName;
             }
-            TargetSiteViewModel ret = new TargetSiteViewModel();
+            var ret = new TargetSiteViewModel();
             if (File.Exists(fileName))
             {
-                ret = TargetSiteViewModel.ReadFromXML<TargetSiteViewModel>(TargetSiteViewModel.DefaultFileName);
+                ret = ReadFromXML<TargetSiteViewModel>(DefaultFileName);
             }
             else
             {
@@ -44,7 +50,7 @@ namespace ComicChecker
                     ret.Sites.Add(new TargetSite(curUrl));
                 }
             }
-            
+
             return ret;
         }
 
@@ -54,9 +60,9 @@ namespace ComicChecker
             {
                 return false;
             }
-            List<Task> tasks = new List<Task>();
-            List<Tuple<TargetSite, SiteResult>> results = new List<Tuple<TargetSite, SiteResult>>();
-            foreach (TargetSite cur in Sites)
+            var tasks = new List<Task>();
+            var results = new List<Tuple<TargetSite, SiteResult>>();
+            foreach (var cur in Sites)
             {
                 tasks.Add(Task.Run(async () =>
                 {
@@ -67,7 +73,7 @@ namespace ComicChecker
             }
             var timeout = TimeSpan.FromSeconds(5);
             await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(timeout));
-            List<TargetSite> remaining = new List<TargetSite>(Sites);
+            var remaining = new List<TargetSite>(Sites);
             foreach (var cur in results.Where(x => x.Item2.CompletedSuccessfully).ToList())
             {
                 cur.Item1.CheckForNew(cur.Item2);
@@ -84,12 +90,12 @@ namespace ComicChecker
 
         private bool CheckForConnection()
         {
-            int attemptCount = 4;
+            var attemptCount = 4;
             while (attemptCount > 0)
             {
                 try
                 {
-                    Ping connectionTest = new Ping();
+                    var connectionTest = new Ping();
                     //String simpleMessage = "dummyText";
                     //Byte[] encodedMessage = Encoding.ASCII.GetBytes(simpleMessage);
                     var result = connectionTest.Send("www.google.com", 1000);
@@ -111,49 +117,21 @@ namespace ComicChecker
         }
 
 
-        private bool CheckForConnection2()
-        {
-            if (!NetworkInterface.GetIsNetworkAvailable())
-            {
-                return false;
-            }
-            foreach (var curInterface in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                if (curInterface.OperationalStatus != OperationalStatus.Up ||
-                    curInterface.NetworkInterfaceType == NetworkInterfaceType.Loopback ||
-                    curInterface.NetworkInterfaceType == NetworkInterfaceType.Loopback
-                )
-                {
-                    continue;
-                }
-                if (curInterface.Description.ToLower().Contains("virtual") ||
-                    curInterface.Name.ToLower().Contains("virtual"))
-                {
-                    continue;
-                }
-                if (curInterface.Description.ToLower().Equals("microsoft loopback adapter"))
-                {
-                    continue;
-                }
-                return true;
-            }
-            return false;
-        }
 
         public void SaveToFile(string comicdataXml = "")
         {
-            if (String.IsNullOrWhiteSpace(comicdataXml))
+            if (string.IsNullOrWhiteSpace(comicdataXml))
             {
                 comicdataXml = DefaultFileName;
             }
             WriteToXML(this, comicdataXml);
         }
 
-        private static void WriteToXML<T>(T someObject, String fileName)
+        private static void WriteToXML<T>(T someObject, string fileName)
         {
             var settings = new XmlWriterSettings {Indent = true};
-            var ser = new DataContractSerializer(typeof (T), null, int.MaxValue, false, true, null);
-            using (XmlWriter w = XmlWriter.Create(fileName, settings))
+            var ser = new DataContractSerializer(typeof(T), null, int.MaxValue, false, true, null);
+            using (var w = XmlWriter.Create(fileName, settings))
                 ser.WriteObject(w, someObject);
         }
 
@@ -161,30 +139,28 @@ namespace ComicChecker
         {
             using (var reader = new FileStream(p0, FileMode.Open, FileAccess.Read))
             {
-                var ser = new DataContractSerializer(typeof (T));
+                var ser = new DataContractSerializer(typeof(T));
                 return ser.ReadObject(reader) as T;
             }
         }
 
         public void CleanEmptySites()
         {
-            List<TargetSite> allEmpty = Sites.Where(x => String.IsNullOrWhiteSpace(x.SiteURL)).ToList();
-            foreach (TargetSite cur in allEmpty)
+            var allEmpty = Sites.Where(x => string.IsNullOrWhiteSpace(x.SiteURL)).ToList();
+            foreach (var cur in allEmpty)
             {
                 Sites.Remove(cur);
             }
         }
 
 
-
-
         public async Task<bool> RunAllTheNewSites()
         {
-            List<TargetSite> allNew = Sites.Where(x => x.IsNew).ToList();
-            StringBuilder sb = new StringBuilder();
-            List<Task> procTasks = new List<Task>();
-            bool allSuccess = true;
-            foreach (TargetSite cur in allNew)
+            var allNew = Sites.Where(x => x.IsNew).ToList();
+            var sb = new StringBuilder();
+            var procTasks = new List<Task>();
+            var allSuccess = true;
+            foreach (var cur in allNew)
             {
                 procTasks.Add(Task.Factory.StartNew(() =>
                 {
@@ -202,12 +178,11 @@ namespace ComicChecker
                 }));
             }
             await Task.WhenAll(procTasks);
-            if (!String.IsNullOrWhiteSpace(sb.ToString()))
+            if (!string.IsNullOrWhiteSpace(sb.ToString()))
             {
                 MessageBox.Show(sb.ToString());
             }
             return allSuccess;
-
         }
     }
 }

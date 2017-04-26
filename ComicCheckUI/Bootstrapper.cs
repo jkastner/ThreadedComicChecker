@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Caliburn.Micro;
+using ComicCheckUI.Properties;
 using ComicCheckUI.ViewModels;
 
 namespace ComicCheckUI
@@ -78,7 +79,26 @@ namespace ComicCheckUI
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
-            DisplayRootViewFor<ShellViewModel>();
+            var width = Settings.Default.ScreenWidth; //Previous window width 
+            var height = Settings.Default.ScreenHeight; //Previous window height
+
+            var screenWidth = SystemParameters.PrimaryScreenWidth;
+            var screenHeight = SystemParameters.PrimaryScreenHeight;
+
+            if (width > screenWidth || width==0)
+            {
+                width = screenWidth - 10;
+            }
+            if (height > screenHeight || height==0)
+            {
+                height = screenHeight - 10;
+            }
+
+            var windowSettings = new Dictionary<string, object>();
+
+            windowSettings.Add("Width", width);
+            windowSettings.Add("Height", height);
+            DisplayRootViewFor<ShellViewModel>(windowSettings);
         }
 
     }

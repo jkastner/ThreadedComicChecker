@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicChecker", "ComicChecker\ComicChecker.csproj", "{DD32C9B3-F167-411F-9FE2-7AFDD8140E74}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicCheckerControl", "ComicCheckerControl\ComicCheckerControl.csproj", "{B42F899C-6331-4982-B131-DDD8DAB8E65A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicCheckUI", "ComicCheckUI\ComicCheckUI.csproj", "{27CDFD24-700E-463C-BF10-6C22351F3EE4}"
 EndProject
@@ -19,10 +17,6 @@ Global
 		{DD32C9B3-F167-411F-9FE2-7AFDD8140E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD32C9B3-F167-411F-9FE2-7AFDD8140E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD32C9B3-F167-411F-9FE2-7AFDD8140E74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B42F899C-6331-4982-B131-DDD8DAB8E65A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B42F899C-6331-4982-B131-DDD8DAB8E65A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B42F899C-6331-4982-B131-DDD8DAB8E65A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B42F899C-6331-4982-B131-DDD8DAB8E65A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{27CDFD24-700E-463C-BF10-6C22351F3EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27CDFD24-700E-463C-BF10-6C22351F3EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27CDFD24-700E-463C-BF10-6C22351F3EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
