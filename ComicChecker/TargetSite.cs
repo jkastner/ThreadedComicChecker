@@ -220,10 +220,11 @@ namespace ComicChecker
 
         
 
-        async Task<string> DownloadPage(string url)
+        internal async Task<string> DownloadPage(string url)
         {
             using (var client = new HttpClient())
             {
+                client.Timeout = TimeSpan.FromSeconds(TargetSiteViewModel.TimeoutInSeconds);
                 using (var r = await client.GetAsync(new Uri(url), _cancelToken.Token))
                 {
                     string result = await r.Content.ReadAsStringAsync();
