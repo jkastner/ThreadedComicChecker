@@ -55,7 +55,7 @@ namespace ComicCheckUI.ViewModels
         {
             ToggleInteraction(false);
             var success = await _comicInfo.Download();
-            if (!success)
+            if (success==FullCheckResult.NotConnected)
             {
                 _toastDisplayViewModel.DisplayMessage( "Failed to connect.");
             }
